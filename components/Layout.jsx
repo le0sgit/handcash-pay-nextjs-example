@@ -1,8 +1,21 @@
 import Link from "next/link";
+import Head from "next/head";
 
 export default function Layout({children}) {
     return (
         <div className="flex flex-col items-center bg-darkBackground-900 min-h-screen">
+            <Head>
+                <title>HandCash Pay Example</title>
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://handcash-pay-nextjs-example-rseibane-handcash.vercel.app/og-preview.png" />
+                <meta property="og:title" content="HandCash Pay Example" />
+                <meta property="og:description" content="Getting started with HandCash Pay + NextJS" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content="@handcashapp" />
+                <meta name="twitter:image" content="https://handcash-pay-nextjs-example-rseibane-handcash.vercel.app/og-preview.png" />
+                <meta name="twitter:title" content="HandCash Pay Example" />
+                <meta name="twitter:description" content="Getting started with HandCash Pay + NextJS" />
+            </Head>
             <nav
                 className="container flex grow-0 w-full justify-center border-b border-white/10">
                 <div className="p-4 flex flex-grow justify-between items-center ">
