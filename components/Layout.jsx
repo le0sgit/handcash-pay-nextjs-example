@@ -17,21 +17,21 @@ export default function Layout({children}) {
                 <meta name="twitter:description" content="Getting started with HandCash Pay + NextJS" />
             </Head>
             <nav
-                className="container flex grow-0 w-full justify-center border-b border-white/10">
+                className="container flex grow-0 w-full justify-center">
                 <div className="p-4 flex flex-grow justify-between items-center ">
                     <Link href="/" passHref>
                         <h1 className="text-xl font-bold text-white/90 hover:text-white hover:cursor-pointer">HandCash
-                            Pay Demo</h1>
+                            Pay Checkout Demo</h1>
                     </Link>
                     <div className="flex gap-x-4">
                         <Link
-                            className="flex items-center w-fit rounded-full py-1 pl-4 pr-5 gap-x-4 border border-transparent text-lg font-light hover:text-white text-white/70"
+                            className="hidden md:block flex items-center w-fit rounded-full py-1 pl-4 pr-5 gap-x-4 border border-transparent text-lg font-light hover:text-white text-white/70"
                             target="_blank"
                             rel="noreferrer"
                             href="https://docs.handcash.io/docs/overview">Github
                         </Link>
                         <Link
-                            className="flex items-center w-fit rounded-full py-1 pl-4 pr-5 gap-x-4 border border-transparent text-lg font-light hover:text-white text-white/70"
+                            className="hidden md:block flex items-center w-fit rounded-full py-1 pl-4 pr-5 gap-x-4 border border-transparent text-lg font-light hover:text-white text-white/70"
                             target="_blank"
                             rel="noreferrer"
                             href="https://docs.handcash.io/docs/overview">Documentation
@@ -51,7 +51,7 @@ export default function Layout({children}) {
                     </div>
                 </div>
             </nav>
-            <div className="grow flex">
+            <div className="grow flex border-t border-white/10 w-full">
                 {children}
             </div>
             <footer
