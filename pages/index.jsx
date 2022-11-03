@@ -207,6 +207,7 @@ export default function Index() {
                         {paymentState?.status === paymentStatus.unknown &&
                             <button
                                 className="w-full bg-indigo-500 hover:opacity-90 text-3xl text-white/90 md:rounded-b-xl py-3"
+                                disabled={inputAmount <= 0}
                                 onClick={onConfirmPaymentAmount}
                             >Enter
                             </button>

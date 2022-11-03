@@ -172,6 +172,7 @@ const Home = () => {
                                 className="block w-full bg-black placeholder:text-white/50 rounded-md border-transparent shadow shadow-white/10 invalid:border-red-500 px-3 focus:border-indigo-500 focus:ring-indigo-500 hover:shadow-white/20 text-lg caret-indigo-500"
                                 placeholder="My pop-up store"
                                 value={validationState.businessName.value}
+                                maxLength={25}
                                 onInput={onChangeBusinessName}
                             />
                         </div>
