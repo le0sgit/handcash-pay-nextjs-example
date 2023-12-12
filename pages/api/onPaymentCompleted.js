@@ -1,7 +1,7 @@
 import PaymentsRepository from "../../lib/repositories/PaymentsRepository";
 import {paymentStatus} from "../../lib/Entities";
 
-const appSecret = process.env.APP_SECRET;
+const appSecret = process.env.NEXT_PUBLIC_APP_SECRET;
 
 export default function handler(req, res) {
     try {

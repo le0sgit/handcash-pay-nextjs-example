@@ -1,26 +1,27 @@
 import {useEffect, useState} from "react";
 import {paymentStatus} from "../lib/Entities";
 import moment from "moment";
+const appId = process.env.NEXT_PUBLIC_APP_ID;
+const appSecret = process.env.NEXT_PUBLIC_APP_SECRET;
 
 export default function Index() {
     const [inputAmount, setInputAmount] = useState(0);
+    const [chapterNumber, setChapterNumber] = useState(1); // Inicializas chapterNumber con 1 u otro valor predeterminado
     const [paymentState, setPaymentState] = useState({
         status: paymentStatus.unknown,
     });
-    const [settings, setSettings] = useState({});
     const [recentPayments, setRecentPayments] = useState([]);
 
     let checkPaymentStatusInterval;
 
     useEffect(() => {
-        const storedSettings = localStorage.getItem('settings');
-        if (storedSettings) {
-            setSettings(JSON.parse(storedSettings));
-        } else {
-            window.location.href = '/settings';
-        }
         getRecentPayments();
     }, []);
+
+    const onSelectChapter = (event) => {
+        const selectedChapter = parseInt(event.target.value);
+        setChapterNumber(selectedChapter);
+    };
 
     const onChangeInputAmount = (event) => {
         const value = parseFloat(event.target.value);
@@ -36,10 +37,8 @@ export default function Index() {
             method: 'POST',
             body: JSON.stringify({
                 sendAmount: inputAmount,
+                chapterNumber: chapterNumber,
                 currencyCode: 'USD',
-                destination: settings?.destination,
-                businessName: settings?.businessName,
-                notificationsEmail: settings?.notificationsEmail,
             }),
         });
         if (response.ok) {
@@ -113,6 +112,7 @@ export default function Index() {
         }
     };
 
+
     const startCheckPaymentStatusInterval = (id) => {
         clearInterval(checkPaymentStatusInterval);
         checkPaymentStatusInterval = setInterval(() => {
@@ -122,7 +122,7 @@ export default function Index() {
 
     return (
         <div className="w-full grow flex flex-col md:flex-row justify-around gap-x-16 p-0 md:p-6">
-            <div className="w-full h-full grow md:basis-1/2 flex md:justify-end">
+            <div className="w-full h-full grow md:basis-1/2 flex md:justify-beginin">      
                 <div
                     className="w-full grow md:max-w-[22rem] flex flex-col md:rounded-xl bg-darkBackground-800 md:shadow-sm shadow-white/10 justify-center items-center">
                     {paymentState?.status === paymentStatus.unknown &&
@@ -136,8 +136,26 @@ export default function Index() {
                                 <path strokeLinecap="round" strokeLinejoin="round"
                                       d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z"/>
                             </svg>
-                            <p className="text-xl text-white/40">Enter an amount to generate a payment QR code</p>
+                            <p className="text-xl text-white/40">Enter an amount to generate a payment QR code. (1$ min)</p>
+                            <div className="relative mt-10">
+                                <label htmlFor="chapterNumber" className="text-white/70 text-3xl text-sm">
+                                    Select a chapter:
+                                </label>
+                                    <select
+                                        className="block w-full bg-darkBackground-800 border-0 border-t border-white/30 pr-2 pl-6 focus:text-indigo-400 focus:caret-indigo-400 focus:border-indigo-500 focus:ring-transparent text-3xl text-left"
+                                        type="number"
+                                        id="chapterNumber"
+                                        min={1}
+                                        max={10} // Ajusta el valor máximo según el número máximo de capítulos disponibles
+                                        value={chapterNumber}
+                                        onChange={onSelectChapter}
+                                     > 
+                                        <option value={1}>Chapter 1</option>
+                                        <option value={2}>Chapter 2</option>
+                                    </select>
+                            </div>
                         </div>
+
                     }
                     {paymentState?.status === paymentStatus.confirmed &&
                         <div
@@ -159,7 +177,17 @@ export default function Index() {
                             <div className="p-1 bg-white w-72 h-72 rounded-xl">
                                 <img src={paymentState?.paymentRequest?.paymentRequestQrCodeUrl}
                                      alt={"QR code for payment request"}
-                                     className="w-full h-full"/>
+                                     className="w-full h-full"
+                                />
+                                <div className="flex flex-col grow gap-y-2 w-full p-6 rounded-xl items-center justify-center">
+                                <a
+                                    href={paymentState?.paymentRequest?.paymentRequestUrl}
+                                    className="button"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    >Payment Link
+                                </a>
+                                </div>
                             </div>
                             {paymentState?.expirationInSeconds && paymentState.expirationInSeconds < 30 &&
                                 <div
@@ -195,7 +223,7 @@ export default function Index() {
                                 name="amount"
                                 id="amount"
                                 disabled={paymentState?.status !== paymentStatus.unknown}
-                                onInput={onChangeInputAmount}
+                                onInput= {onChangeInputAmount}
                                 onKeyDown={(event) => event.key === 'Enter' && onConfirmPaymentAmount()}
                                 className="block w-full bg-darkBackground-800 border-0 border-t border-white/30 pr-2 pl-6 focus:text-indigo-400 focus:caret-indigo-400 focus:border-indigo-500 focus:ring-transparent text-4xl"
                                 placeholder="0.00"
@@ -207,7 +235,7 @@ export default function Index() {
                         {paymentState?.status === paymentStatus.unknown &&
                             <button
                                 className="w-full bg-indigo-500 hover:opacity-90 text-3xl text-white/90 md:rounded-b-xl py-3"
-                                disabled={inputAmount <= 0}
+                                disabled={inputAmount <= 0.01}
                                 onClick={onConfirmPaymentAmount}
                             >Enter
                             </button>
@@ -228,9 +256,9 @@ export default function Index() {
                         }
                     </div>
                 </div>
-            </div>
-            <div className="w-full grow hidden md:block basis-1/2 flex justify-start">
-                <div className="flex flex-col max-w-[23rem] max-h-[32rem] items-start gap-y-2">
+
+                <div className="w-full grow hidden md:block basis-1/2 flex justify-start">
+          {/*       <div className="flex flex-col max-w-[23rem] max-h-[32rem] items-start gap-y-2">
                     <div className="flew-grow w-full mb-2 flex justify-between">
                         <h3 className="text-md text-white/90 uppercase">Recent payments</h3>
                         <button
@@ -284,6 +312,20 @@ export default function Index() {
                             }
                         </div>
                     }
+                </div> */}
+            </div>
+
+                <div className="w-full md:max-w-[55rem] md:flex md:flex-col md:rounded-xl md:justify-center md:items-center">
+                    <div className="image-info-container">
+                    <img
+                        src="https://m.media-amazon.com/images/I/71FCTw0wGSL._SY342_.jpg"
+                        alt="Title of the Image"
+                        className="image"
+                        style={{ maxWidth: '100%', height: 'auto' }}
+                    />
+                    <h2 className="title">Title of the Image</h2>
+                    <p className="description">Description of the image goes here.</p>
+                    </div>
                 </div>
             </div>
         </div>

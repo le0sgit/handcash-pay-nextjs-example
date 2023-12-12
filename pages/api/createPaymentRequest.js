@@ -4,13 +4,12 @@ import HandCashService from "../../lib/services/HandCashService";
 
 export default async function handler(req, res) {
     try {
-        const {sendAmount, destination, currencyCode, businessName, notificationsEmail} = JSON.parse(req.body);
+        const {sendAmount, currencyCode, notificationsEmail, chapterNumber} = JSON.parse(req.body);
         const data = await HandCashService.createPaymentRequest({
-            businessName,
             sendAmount,
-            destination,
             currencyCode,
-            notificationsEmail
+            notificationsEmail,
+            chapterNumber,
         });
         PaymentsRepository.setById(data.id, {
             status: paymentStatus.pending,
